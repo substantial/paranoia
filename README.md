@@ -168,6 +168,26 @@ before_restore :callback_name_goes_here
 
 For more information, please look at the tests.
 
+## MySQL NOTE
+
+MySQL ignores null columns when it comes to resolving unique index constraints.
+This means that all of our unique constraints that involve nullable columns are
+problematic. So please pick an epoch that you want paranoia to consider not
+deleted.
+
+Per model:
+
+```ruby
+ #pick some epoch
+ acts_as_paranoid sentinel_value: DateTime.new(0)
+```
+
+or globally in a rails initializer, e.g. `config/initializer/paranoia.rb`
+
+```ruby
+Paranoia.default_sentinel_value = DateTime.new(0)
+```
+
 ## Acts As Paranoid Migration
 
 You can replace the older `acts_as_paranoid` methods as follows:
