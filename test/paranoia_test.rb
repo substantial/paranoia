@@ -170,6 +170,7 @@ class ParanoiaTest < test_framework
 
     model.restore
     assert_equal DateTime.new(0), model.deleted_at
+    assert !model.destroyed?
 
     assert_equal 1, model.class.count
     assert_equal 1, model.class.unscoped.count

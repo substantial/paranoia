@@ -91,7 +91,7 @@ module Paranoia
   alias :restore :restore!
 
   def destroyed?
-    !!send(paranoia_column)
+    send(paranoia_column) != paranoia_sentinel_value
   end
   alias :deleted? :destroyed?
 
