@@ -592,12 +592,11 @@ class ParanoiaTest < test_framework
   end
 
   def test_i_am_the_destroyer
-    output = capture(:stdout) { ParanoidModel.I_AM_THE_DESTROYER! }
     assert_equal %Q{
       Sharon: "There should be a method called I_AM_THE_DESTROYER!"
       Ryan:   "What should this method do?"
       Sharon: "It should fix all the spelling errors on the page!"
-}, output
+    }, ParanoidModel.I_AM_THE_DESTROYER!
   end
 
   def test_destroy_fails_if_callback_raises_exception
