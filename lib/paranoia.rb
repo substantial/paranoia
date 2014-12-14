@@ -69,7 +69,21 @@ module Paranoia
         touch_paranoia_column
       end
     end
-    callbacks_result ? self : false
+    if callbacks_result
+      if ActiveRecord::VERSION::STRING >= '4.2'
+        each_counter_cached_associations do |association|
+          foreign_key = association.reflection.foreign_key.to_sym
+          unless destroyed_by_association && destroyed_by_association.foreign_key.to_sym == foreign_key
+            if send(association.reflection.name)
+              association.decrement_counters
+            end
+          end
+        end
+      end
+      self
+    else
+      false
+    end
   end
 
   # As of Rails 4.1.0 +destroy!+ will no longer remove the record from the db
