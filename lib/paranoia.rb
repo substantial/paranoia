@@ -66,24 +66,21 @@ module Paranoia
   def destroy
     callbacks_result = transaction do
       run_callbacks(:destroy) do
-        touch_paranoia_column
-      end
-    end
-    if callbacks_result
-      if ActiveRecord::VERSION::STRING >= '4.2'
-        each_counter_cached_associations do |association|
-          foreign_key = association.reflection.foreign_key.to_sym
-          unless destroyed_by_association && destroyed_by_association.foreign_key.to_sym == foreign_key
-            if send(association.reflection.name)
-              association.decrement_counters
+        result = touch_paranoia_column
+        if result && ActiveRecord::VERSION::STRING >= '4.2'
+          each_counter_cached_associations do |association|
+            foreign_key = association.reflection.foreign_key.to_sym
+            unless destroyed_by_association && destroyed_by_association.foreign_key.to_sym == foreign_key
+              if send(association.reflection.name)
+                association.decrement_counters
+              end
             end
           end
         end
+        result
       end
-      self
-    else
-      false
     end
+    callbacks_result ? self : false
   end
 
   # As of Rails 4.1.0 +destroy!+ will no longer remove the record from the db
